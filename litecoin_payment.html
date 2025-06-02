@@ -7,15 +7,14 @@
   <link rel="icon" href="https://i.imgur.com/Egq0xbe.png" >
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" >
   <style>
+    /* Your existing styles here (same as your old UI) */
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
       font-family: 'Poppins', sans-serif;
     }
-
-    html,
-    body {
+    html, body {
       height: 100%;
       background: transparent;
       color: #fff;
@@ -26,7 +25,6 @@
       text-align: center;
       padding: 20px;
     }
-
     #vanta-bg {
       position: fixed;
       width: 100%;
@@ -35,44 +33,35 @@
       left: 0;
       z-index: -1;
     }
-
     .container {
-      background: rgba(0, 0, 0, 0.65);
+      background: rgba(0,0,0,0.65);
       padding: 40px 30px;
       border-radius: 16px;
       max-width: 500px;
-      box-shadow: 0 8px 20px rgba(225, 8, 255, 0.3);
+      box-shadow: 0 8px 20px rgba(225,8,255,0.3);
       border: 1px solid #e108ff;
     }
-
     h1 {
       font-size: 2rem;
       margin-bottom: 20px;
       color: #e108ff;
     }
-
-    .product-info,
-    .ltc-info,
-    .timer {
+    .product-info, .ltc-info, .timer {
       margin-bottom: 20px;
       font-weight: 600;
     }
-
     .ltc-info span {
       font-size: 1.5rem;
       color: #e108ff;
     }
-
     .qr {
       margin: 20px 0;
     }
-
     img.qr-code {
       width: 200px;
       height: 200px;
       margin: auto;
     }
-
     .address {
       background: #222;
       color: #fff;
@@ -82,13 +71,11 @@
       word-break: break-all;
       font-size: 0.9rem;
     }
-
     .instructions {
       margin-top: 20px;
       font-size: 1rem;
       color: #ccc;
     }
-
     button {
       background-color: #e108ff;
       border: none;
@@ -100,27 +87,22 @@
       cursor: pointer;
       margin-top: 20px;
     }
-
     button:hover {
       background-color: #b006cc;
     }
-
     .loading {
       font-size: 0.9rem;
       color: #aaa;
       margin-top: 10px;
     }
-
     .spinner {
       display: none;
       margin-top: 20px;
     }
-
     .spinner img {
       width: 40px;
       height: 40px;
     }
-
     .spinner p {
       margin-top: 10px;
       font-size: 1rem;
@@ -129,7 +111,6 @@
 </head>
 <body>
   <div id="vanta-bg"></div>
-
   <div class="container">
     <h1>Pay with Litecoin</h1>
     <div class="product-info" id="productInfo"></div>
@@ -138,7 +119,7 @@
       <span id="ltcAmount">Loading...</span>
       <div class="loading" id="ltcLoading">Updating Litecoin price...</div>
     </div>
-    <div class="timer" id="countdown">15:00</div>
+    <div class="timer" id="countdown">30:00</div>
     <div class="qr">
       <img class="qr-code" id="qrCode" src="" alt="Litecoin QR Code" >
     </div>
@@ -146,7 +127,7 @@
     <div class="instructions">
       <p>1. Open your Litecoin wallet.</p>
       <p>2. Send the required amount to the address above.</p>
-      <p>3. The payment is valid for 15 minutes only.</p>
+      <p>3. The payment is valid for 30 minutes only.</p>
     </div>
     <button id="confirmBtn" onclick="startAutoPaymentCheck()">I've Sent the Payment</button>
     <div class="spinner" id="spinner">
@@ -178,10 +159,10 @@
     });
 
     const params = new URLSearchParams(window.location.search);
-    const productName = params.get('product') || "Unknown Product";
-    const productPrice = parseFloat(params.get('price')?.replace('$', '')) || 0;
+    const productName = params.get('product');
+    const productPrice = parseFloat(params.get('price')?.replace('$', ''));
     const productQuantity = parseInt(params.get('quantity') || '1');
-    const totalUSD = parseFloat(params.get('total')) || (productPrice * productQuantity);
+    const totalUSD = parseFloat(params.get('total'));
 
     const productInfoDiv = document.getElementById('productInfo');
     const ltcAmountSpan = document.getElementById('ltcAmount');
@@ -191,20 +172,17 @@
     const confirmBtn = document.getElementById('confirmBtn');
     const spinner = document.getElementById('spinner');
 
-    const walletAddress = "LaqMHLNTTDkEWm71hLFbGiPACFqtarFMff"; // Your LTC address here
+    const walletAddress = "LaqMHLNTTDkEWm71hLFbGiPACFqtarFMff"; // Change if needed
 
-    // Display product info
     if (!isNaN(totalUSD)) {
-      productInfoDiv.innerHTML = `
-        You are buying <strong>${productName}</strong><br>
+      productInfoDiv.innerHTML = 
+        `You are buying <strong>${productName}</strong><br>
         Price: $${productPrice.toFixed(2)} x ${productQuantity}<br>
-        <strong>Total: $${totalUSD.toFixed(2)}</strong>
-      `;
+        <strong>Total: $${totalUSD.toFixed(2)}</strong>`;
     } else {
-      productInfoDiv.textContent = 'Error loading payment details.';
+      productInfoDiv.innerHTML = 'Error loading payment details.';
     }
 
-    // Get Litecoin price from CoinGecko
     async function getLtcPrice() {
       try {
         const res = await fetch('https://api.coingecko.com/api/v3/simple/price?ids=litecoin&vs_currencies=usd');
@@ -216,22 +194,20 @@
       }
     }
 
-    // Update LTC amount to send and QR code
     async function updateLtcAmount() {
       const ltcPrice = await getLtcPrice();
       const ltcToSend = (totalUSD / ltcPrice).toFixed(6);
       ltcAmountSpan.textContent = `${ltcToSend} LTC`;
       ltcLoading.style.display = 'none';
-
-      const qrSrc = `https://quickchart.io/qr?text=litecoin:${walletAddress}?amount=${ltcToSend}&size=200x200`;
+      const qrSrc = `https://quickchart.io/qr?text=ltc:${walletAddress}?amount=${ltcToSend}&size=200x200`;
       qrCodeImg.src = qrSrc;
     }
 
     updateLtcAmount();
 
-    // Countdown timer for 15 minutes
+    // 30-minute countdown timer
     function updateCountdown() {
-      let timeLeft = 15 * 60;
+      let timeLeft = 30 * 60;
       const countdown = document.getElementById('countdown');
       const interval = setInterval(() => {
         const minutes = Math.floor(timeLeft / 60);
@@ -239,8 +215,7 @@
         countdown.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
         if (timeLeft <= 0) {
           clearInterval(interval);
-          alert('Payment window expired.');
-          window.location.href = 'index.html';
+          window.location.href = 'payment_failed.html';
         }
         timeLeft--;
       }, 1000);
@@ -248,147 +223,99 @@
 
     updateCountdown();
 
-    // Check payments via BlockCypher API
+    // Simple in-memory cache for address API results with timestamps
+    const apiCache = {
+      lastCheckTime: 0,
+      cacheDuration: 30000, // 30 seconds cache duration
+      data: null
+    };
+
     async function checkLtcPayment(address, expectedAmount) {
+      const now = Date.now();
+
+      // Use cached data if fresh
+      if (apiCache.data && (now - apiCache.lastCheckTime < apiCache.cacheDuration)) {
+        return processTransactions(apiCache.data, expectedAmount);
+      }
+
       try {
-        // Fetch transactions for the address
-        const response = await fetch(`https://api.blockcypher.com/v1/ltc/main/addrs/${address}/full?limit=10`);
-        if (!response.ok) {
-          throw new Error('BlockCypher API error');
+        const url = `https://api.blockcypher.com/v1/ltc/main/addrs/${address}/full?limit=50`;
+        const res = await fetch(url);
+        if (res.status === 429) {
+          console.warn("Rate limited by BlockCypher API, backing off...");
+          return null;
         }
-        const data = await response.json();
-        const txrefs = data.txrefs || [];
-
-        // Time filtering: only last 15 minutes
-        const fifteenMinutesAgo = Date.now() - 15 * 60 * 1000;
-
-        for (const tx of txrefs) {
-          // tx.confirmed is ISO string
-          if (tx.confirmed) {
-            const txTime = new Date(tx.confirmed).getTime();
-            if (txTime >= fifteenMinutesAgo) {
-              // tx.output_n == 0 or 1 etc - output index, value in satoshis
-              const valueLtc = tx.value / 100000000;
-              if (Math.abs(valueLtc - expectedAmount) < 0.00001) {
-                return { paid: true, txHash: tx.tx_hash };
-              }
-            }
-          }
+        if (!res.ok) {
+          console.error("Error fetching payment data:", await res.text());
+          return null;
         }
+        const data = await res.json();
 
-        return { paid: false };
+        // Cache the result
+        apiCache.data = data;
+        apiCache.lastCheckTime = now;
+
+        return processTransactions(data, expectedAmount);
       } catch (err) {
         console.error("Error checking payment:", err);
-        return { paid: false, error: true };
+        return null;
       }
     }
 
-    // Send webhook to Discord with payment info
-    async function sendWebhook(status, txHash = null) {
-      const webhookURL = "https://discord.com/api/webhooks/1379016818529665085/Zk8ia9hYuKyNTzKQPP3zBJErIxa0xtKisbz3veB4olj-ly0hw1djXseMBk1_6oFFv4nb";
-
-      const ltcPrice = await getLtcPrice();
-      const ltcToSend = (totalUSD / ltcPrice).toFixed(6);
-
-      const paymentData = {
-        product: productName,
-        price: `$${productPrice.toFixed(2)}`,
-        quantity: productQuantity,
-        total: `$${totalUSD.toFixed(2)}`,
-        ltc_amount: `${ltcToSend} LTC`,
-        timestamp: new Date().toISOString(),
-        txHash: txHash
-      };
-
-      let statusEmoji = "⚠️";
-      let color = 14474460; // Red
-
-      if (status === "confirmed") {
-        statusEmoji = "✅";
-        color = 5763719; // Green
-      } else if (status === "waiting") {
-        statusEmoji = "⏳";
-      } else if (status === "failed") {
-        statusEmoji = "❌";
+    // Process transactions to see if payment was made
+    function processTransactions(data, expectedAmountLTC) {
+      if (!data.txrefs && !data.unconfirmed_txrefs) {
+        return false;
       }
+      const txs = (data.txrefs || []).concat(data.unconfirmed_txrefs || []);
 
-      const discordMessage = {
-        content: null,
-        embeds: [{
-          title: "📦 Litecoin Payment Status Update",
-          color: color,
-          fields: [
-            { name: "Product", value: paymentData.product, inline: false },
-            { name: "Price", value: paymentData.price, inline: true },
-            { name: "Quantity", value: paymentData.quantity.toString(), inline: true },
-            { name: "Total USD", value: paymentData.total, inline: false },
-            { name: "LTC Amount", value: paymentData.ltc_amount, inline: false },
-            { name: "Status", value: `${statusEmoji} ${status.toUpperCase()}`, inline: false },
-            { name: "Timestamp", value: paymentData.timestamp, inline: false }
-          ]
-        }]
-      };
-
-      if (txHash) {
-        discordMessage.embeds[0].fields.push({
-          name: "Transaction Hash",
-          value: `[${txHash}](https://live.blockcypher.com/ltc/tx/${txHash}/)`,
-          inline: false
-        });
+      for (const tx of txs) {
+        // We check if the address received >= expectedAmountLTC * 1e8 satoshis
+        // BlockCypher returns value in satoshis
+        if (tx.tx_input_n === -1 && tx.address === walletAddress) {
+          const receivedLtc = tx.value / 1e8;
+          if (receivedLtc >= expectedAmountLTC) {
+            return true;
+          }
+        }
       }
-
-      try {
-        await fetch(webhookURL, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(discordMessage)
-        });
-      } catch (err) {
-        console.error("Failed to send webhook:", err);
-      }
+      return false;
     }
 
-    // Start auto payment check loop
-    async function startAutoPaymentCheck() {
-      const ltcPrice = await getLtcPrice();
-      const ltcToSend = (totalUSD / ltcPrice).toFixed(6);
-      const expectedAmount = parseFloat(ltcToSend);
+    let checking = false;
+    let backoffTime = 20000; // Start with 20 seconds interval between checks
 
+    function startAutoPaymentCheck() {
       confirmBtn.style.display = 'none';
       spinner.style.display = 'block';
+      checking = true;
+      backoffTime = 20000;
+      autoCheckLoop();
+    }
 
-      await sendWebhook("waiting");
+    async function autoCheckLoop() {
+      if (!checking) return;
+      const ltcText = ltcAmountSpan.textContent;
+      const amountLTC = parseFloat(ltcText.split(' ')[0]);
 
-      // Initial check
-      const initialCheck = await checkLtcPayment(walletAddress, expectedAmount);
-      if (initialCheck.paid) {
-        await sendWebhook("confirmed", initialCheck.txHash);
-        window.location.href = `payment_success.html?tx=${initialCheck.txHash}`;
+      const paid = await checkLtcPayment(walletAddress, amountLTC);
+      if (paid === true) {
+        alert('Payment received! Redirecting...');
+        window.location.href = 'payment_success.html';
         return;
+      } else if (paid === null) {
+        // API rate limit hit or error, increase backoff delay
+        backoffTime = Math.min(backoffTime * 2, 5 * 60 * 1000); // max 5 mins
+      } else {
+        // Reset backoff if successful check with no rate limit error
+        backoffTime = 20000;
       }
 
-      // Poll every 10 seconds
-      const interval = setInterval(async () => {
-        const result = await checkLtcPayment(walletAddress, expectedAmount);
-        if (result.paid) {
-          clearInterval(interval);
-          await sendWebhook("confirmed", result.txHash);
-          window.location.href = `payment_success.html?tx=${result.txHash}`;
-        }
-      }, 10000);
-
-      // Timeout after 5 minutes
-      setTimeout(async () => {
-        clearInterval(interval);
-        await sendWebhook("failed");
-        window.location.href = "payment_failed.html";
-      }, 300000);
+      setTimeout(autoCheckLoop, backoffTime);
     }
 
     function goBack() {
-      window.location.href = 'index.html';
+      window.history.back();
     }
   </script>
 </body>
