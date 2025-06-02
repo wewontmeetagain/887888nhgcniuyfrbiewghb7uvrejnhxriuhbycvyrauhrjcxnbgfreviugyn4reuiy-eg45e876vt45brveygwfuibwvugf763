@@ -262,17 +262,14 @@
       }
     }
 
-    // Process transactions to see if payment was made
+    // UPDATED processTransactions: check outputs for wallet address
     function processTransactions(data, expectedAmountLTC) {
-      if (!data.txrefs && !data.unconfirmed_txrefs) {
-        return false;
-      }
+      if (!data.txrefs && !data.unconfirmed_txrefs) return false;
+
       const txs = (data.txrefs || []).concat(data.unconfirmed_txrefs || []);
 
       for (const tx of txs) {
-        // We check if the address received >= expectedAmountLTC * 1e8 satoshis
-        // BlockCypher returns value in satoshis
-        if (tx.tx_input_n === -1 && tx.address === walletAddress) {
+        if (tx.address === walletAddress) {
           const receivedLtc = tx.value / 1e8;
           if (receivedLtc >= expectedAmountLTC) {
             return true;
