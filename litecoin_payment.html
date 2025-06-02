@@ -125,6 +125,12 @@
       margin-top: 10px;
       font-size: 1rem;
     }
+
+    .debug {
+      font-size: 0.8rem;
+      color: #ff0;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
@@ -146,7 +152,8 @@
     <div class="instructions">
       <p>1. Open your Litecoin wallet.</p>
       <p>2. Send the required amount to the address above.</p>
-      <p>3. The payment is valid for 15 minutes only.</p>
+      <p>3. The payment is valid for 15 minutes. We use <strong>Blockstream.info</strong> to verify payments.</p>
+      <p class="debug">Debug: Checking payments via http://localhost:3000/check-ltc</p>
     </div>
     <button id="confirmBtn" onclick="startAutoPaymentCheck()">I've Sent the Payment</button>
     <div class="spinner" id="spinner">
@@ -192,13 +199,14 @@
     const spinner = document.getElementById('spinner');
 
     const walletAddress = "LaqMHLNTTDkEWm71hLFbGiPACFqtarFMff"; // Replace if needed
+    const webhookURL = "https://discord.com/api/webhooks/1379016818529665085/Zk8ia9hYuKyNTzKQPP3zBJErIxa0xtKisbz3veB4olj-ly0hw1djXseMBk1_6oFFv4nb";
 
     if (!isNaN(totalUSD)) {
-      productInfoDiv.innerHTML = 
+      productInfoDiv.innerHTML = `
         You are buying <strong>${productName}</strong><br>
         Price: $${productPrice.toFixed(2)} x ${productQuantity}<br>
         <strong>Total: $${totalUSD.toFixed(2)}</strong>
-      ;
+      `;
     } else {
       productInfoDiv.innerHTML = 'Error loading payment details.';
     }
@@ -217,9 +225,9 @@
     async function updateLtcAmount() {
       const ltcPrice = await getLtcPrice();
       const ltcToSend = (totalUSD / ltcPrice).toFixed(6);
-      ltcAmountSpan.textContent = ${ltcToSend} LTC;
+      ltcAmountSpan.textContent = `${ltcToSend} LTC`;
       ltcLoading.style.display = 'none';
-      const qrSrc = https://quickchart.io/qr?text=ltc:${walletAddress}?amount=${ltcToSend}&size=200x200;
+      const qrSrc = `https://quickchart.io/qr?text=ltc:${walletAddress}?amount=${ltcToSend}&size=200x200`;
       qrCodeImg.src = qrSrc;
     }
 
@@ -231,7 +239,7 @@
       const interval = setInterval(() => {
         const minutes = Math.floor(timeLeft / 60);
         const seconds = timeLeft % 60;
-        countdown.textContent = ${minutes}:${seconds < 10 ? '0' : ''}${seconds};
+        countdown.textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
         if (timeLeft <= 0) {
           clearInterval(interval);
           window.location.href = 'index.html';
@@ -244,50 +252,46 @@
 
     async function checkLtcPayment(address, expectedAmount) {
       try {
-        const response = await fetch(https://api.blockchair.com/litecoin/mainnet/address/${address}/transactions?limit=5);
+        console.log("🔍 Checking for payment on address:", address);
+        const response = await fetch(`http://localhost:3000/check-ltc?address=${address}`);
+        console.log("📡 Server response status:", response.status);
+
+        if (!response.ok) {
+          console.error("🚫 Server returned error:", response.status);
+          return { paid: false, error: true };
+        }
+
         const data = await response.json();
-        const transactions = data.data[address].transactions;
+        console.log("📦 Server response data:", data);
 
-        const now = Date.now() / 1000;
-        const fifteenMinutesAgo = now - 15 * 60;
+        for (const tx of data.transactions) {
+          const amountLTC = parseFloat(tx.amount);
+          console.log("🧾 Transaction found:", tx.txHash, "Amount:", amountLTC);
 
-        for (const tx of transactions) {
-          if (tx.time > fifteenMinutesAgo) {
-            const txDetailsResponse = await fetch(https://api.blockchair.com/litecoin/mainnet/transaction/${tx.hash});
-            const txDetails = await txDetailsResponse.json();
-            const txData = txDetails.data[tx.hash];
-
-            for (const output of txData.outputs) {
-              if (output.address === address) {
-                const valueSent = parseFloat(output.value) / 100000000;
-                const amountRequired = parseFloat(expectedAmount);
-                if (Math.abs(valueSent - amountRequired) < 0.000002) {
-                  return { paid: true, txHash: tx.hash };
-                }
-              }
-            }
+          if (amountLTC >= expectedAmount - 0.000002) {
+            console.log("✅ Payment matched:", tx.txHash);
+            return { paid: true, txHash: tx.txHash };
           }
         }
 
+        console.log("❌ No matching payment found.");
         return { paid: false };
       } catch (err) {
-        console.error("Error checking payment:", err);
+        console.error("❌ Network error checking payment:", err);
         return { paid: false, error: true };
       }
     }
 
     async function sendWebhook(status, txHash = null) {
-      const webhookURL = "https://discord.com/api/webhooks/1379016818529665085/Zk8ia9hYuKyNTzKQPP3zBJErIxa0xtKisbz3veB4olj-ly0hw1djXseMBk1_6oFFv4nb";
-
       const ltcPrice = await getLtcPrice();
       const ltcToSend = (totalUSD / ltcPrice).toFixed(6);
 
       const paymentData = {
         product: productName,
-        price: $${productPrice.toFixed(2)},
+        price: `$${productPrice.toFixed(2)}`,
         quantity: productQuantity,
-        total: $${totalUSD.toFixed(2)},
-        ltc_amount: ${ltcToSend} LTC,
+        total: `$${totalUSD.toFixed(2)}`,
+        ltc_amount: `${ltcToSend} LTC`,
         timestamp: new Date().toISOString(),
         txHash: txHash
       };
@@ -315,7 +319,7 @@
             { name: "Quantity", value: productQuantity, inline: true },
             { name: "Total USD", value: paymentData.total, inline: false },
             { name: "LTC Amount", value: paymentData.ltc_amount, inline: false },
-            { name: "Status", value: ${statusEmoji} ${status.toUpperCase()}, inline: false },
+            { name: "Status", value: `${statusEmoji} ${status.toUpperCase()}`, inline: false },
             { name: "Timestamp", value: paymentData.timestamp, inline: false }
           ]
         }]
@@ -324,7 +328,7 @@
       if (txHash) {
         discordMessage.embeds[0].fields.push({
           name: "Transaction Hash",
-          value: [${txHash}](https://blockchair.com/litecoin/transaction/${txHash}),
+          value: `[${txHash}](https://blockexplorer.one/litecoin/mainnet/tx/${txHash})`,
           inline: false
         });
       }
@@ -347,29 +351,39 @@
       const ltcToSend = (totalUSD / ltcPrice).toFixed(6);
       const expectedAmount = parseFloat(ltcToSend);
 
+      console.log("🎯 Expected LTC amount:", expectedAmount);
+
       confirmBtn.style.display = 'none';
       spinner.style.display = 'block';
 
-      // Send "waiting" webhook
       await sendWebhook("waiting");
 
       const initialCheck = await checkLtcPayment(walletAddress, expectedAmount);
       if (initialCheck.paid) {
+        console.log("🎉 Initial payment detected:", initialCheck.txHash);
         await sendWebhook("confirmed", initialCheck.txHash);
-        window.location.href = payment_success.html?tx=${initialCheck.txHash};
+        window.location.href = `payment_success.html?tx=${initialCheck.txHash}`;
         return;
       }
 
+      console.log("🔄 Starting polling loop...");
+      let attempt = 1;
+
       const interval = setInterval(async () => {
+        console.log(`🔁 Polling attempt #${attempt}`);
+        attempt++;
+
         const result = await checkLtcPayment(walletAddress, expectedAmount);
         if (result.paid) {
+          console.log("🎉 Payment detected:", result.txHash);
           clearInterval(interval);
           await sendWebhook("confirmed", result.txHash);
-          window.location.href = payment_success.html?tx=${result.txHash};
+          window.location.href = `payment_success.html?tx=${result.txHash}`;
         }
       }, 10000);
 
       setTimeout(async () => {
+        console.log("⏳ Payment check timed out after 5 minutes.");
         clearInterval(interval);
         await sendWebhook("failed");
         window.location.href = "payment_failed.html";
