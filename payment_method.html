@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Choose Payment Method</title>
+  <link rel="icon" href="https://i.imgur.com/Egq0xbe.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      background: transparent;
+      color: #fff;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    #vanta-bg {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    .container {
+      background: rgba(0, 0, 0, 0.65);
+      padding: 40px 30px;
+      border-radius: 16px;
+      max-width: 500px;
+      box-shadow: 0 8px 20px rgba(225, 8, 255, 0.3);
+      border: 1px solid #e108ff;
+    }
+
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
+      color: #e108ff;
+    }
+
+    p {
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      color: #ddd;
+    }
+
+    .buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .buttons button {
+      background-color: #e108ff;
+      border: none;
+      padding: 15px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: white;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .buttons button:hover {
+      background-color: #b006cc;
+    }
+
+    .product-info {
+      margin-bottom: 20px;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div id="vanta-bg"></div>
+
+  <div class="container">
+    <h1>Choose Payment Method</h1>
+    <div class="product-info" id="productInfo">
+      
+    </div>
+    <div class="buttons">
+      <button onclick="goToCreditCard()">Pay with Credit Card</button>
+      <button onclick="goToLitecoin()">Pay with Litecoin</button>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.birds.min.js"></script>
+  <script>
+    VANTA.BIRDS({
+      el: "#vanta-bg",
+      mouseControls: true,
+      touchControls: true,
+      gyroControls: false,
+      minHeight: 200.00,
+      minWidth: 200.00,
+      scale: 1.00,
+      scaleMobile: 1.00,
+      backgroundColor: 0x000000,
+      color1: 0x000000,
+      color2: 0xe108ff,
+      colorMode: "lerp",
+      birdSize: 0.50,
+      wingSpan: 40.00,
+      speedLimit: 3.00
+    });
+
+    const params = new URLSearchParams(window.location.search);
+    const productName = params.get('product');
+    const productPrice = params.get('price');
+    const productDuration = params.get('duration');
+    const productQuantity = params.get('quantity') || '1';
+    const totalAmount = params.get('total');
+
+    const productInfoDiv = document.getElementById('productInfo');
+    if (productName && productPrice && productDuration && productQuantity && totalAmount) {
+      productInfoDiv.innerHTML = `
+        You are buying <strong>${productName}</strong><br>
+        Price: ${productPrice} x ${productQuantity} (${productDuration})<br>
+        <strong>Total: $${totalAmount}</strong>
+      `;
+    }
+
+    function goToCreditCard() {
+      const url = params.get('product') === 'Server Boost 14x' ? 'creditcard1.html' : 'creditcard.html';
+      window.location.href = `${url}?${params.toString()}`;
+    }
+
+    function goToLitecoin() {
+      window.location.href = `litecoin_payment.html?${params.toString()}`;
+    }
+  </script>
+</body>
+</html>

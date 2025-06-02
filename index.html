@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>VanishBoosts</title>
+  <link rel="icon" href="https://i.imgur.com/Egq0xbe.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    html, body {
+      height: 100%;
+      overflow-x: hidden;
+      color: #ffffff;
+      background: transparent;
+    }
+
+    #vanta-bg {
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      top: 0;
+      left: 0;
+    }
+
+    header {
+      padding: 20px 15px;
+      text-align: center;
+      font-size: 2rem;
+      font-weight: 600;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 15px;
+    }
+
+    header img {
+      height: 60px;
+      width: auto;
+    }
+
+    .stats {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+      padding: 40px 20px;
+      background-color: rgba(0, 0, 0, 0.6);
+      font-size: 1.5rem;
+      font-weight: 600;
+    }
+
+    .stat-box {
+      background-color: rgba(30, 30, 30, 0.8);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      flex: 1;
+      max-width: 200px;
+      color: #fff;
+      position: relative;
+      border: 2px solid rgba(128, 0, 128, 1);
+      box-shadow: 0 0 10px rgba(128, 0, 128, 1);
+    }
+
+    .stat-box img {
+      height: 40px;
+      width: auto;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 0 5px rgba(128, 0, 128, 1));
+    }
+
+    .products {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 30px;
+      padding: 60px 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: rgba(30, 30, 30, 0.8);
+      border-radius: 12px;
+      padding: 25px 20px;
+      width: 300px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.4);
+      border: 2px solid rgba(128, 0, 128, 1);
+      transition: all 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 12px 28px rgba(255, 255, 255, 0.1);
+    }
+
+    .card h2 {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .price {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #e108ff;
+      margin-bottom: 6px;
+    }
+
+    .duration {
+      font-size: 0.9rem;
+      color: #aaa;
+      margin-bottom: 18px;
+    }
+
+    .card ul {
+      list-style: none;
+      padding-left: 15px;
+      margin-bottom: 20px;
+      color: #ddd;
+      font-size: 0.95rem;
+    }
+
+    .card ul li {
+      margin-bottom: 10px;
+      position: relative;
+      padding-left: 20px;
+    }
+
+    .card ul li::before {
+      content: '✔';
+      position: absolute;
+      left: 0;
+      color: #28a745;
+      font-weight: bold;
+    }
+
+    .card button {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      background-color: #e108ff;
+      color: white;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.25s ease;
+    }
+
+    .card button:hover {
+      background-color: #b006cc;
+    }
+
+    @media screen and (max-width: 768px) {
+      .products {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .card {
+        width: 90%;
+        max-width: 400px;
+      }
+    }
+
+    .faq-section {
+      padding: 40px 20px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .faq-item {
+      background-color: rgba(30, 30, 30, 0.8);
+      border: 2px solid rgba(128, 0, 128, 1);
+      border-radius: 12px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .faq-question {
+      padding: 20px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: background-color 0.3s ease;
+    }
+
+    .faq-question:hover {
+      background-color: rgba(30, 30, 30, 0.8);
+    }
+
+    .faq-answer {
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transition: all 0.4s ease;
+      padding: 0 20px;
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 500px;
+      opacity: 1;
+      padding-bottom: 20px;
+    }
+
+    .arrow {
+      transition: transform 0.4s ease;
+    }
+
+    .faq-item.active .arrow {
+      transform: rotate(90deg);
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .button-container button {
+      padding: 15px 30px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      background-color: #333333;
+      color: #ffffff;
+      font-size: 1.2rem;
+      transition: background-color 0.3s;
+    }
+
+    .button-container button.active,
+    .button-container button:hover {
+      background-color: #e108ff;
+    }
+
+    .product-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .review {
+      background-color: rgba(30, 30, 30, 0.8);
+      border: 2px solid rgba(128, 0, 128, 1);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+      width: 100%;
+      max-width: 600px;
+    }
+
+    .review h3 {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .review p {
+      font-size: 1rem;
+      color: #ddd;
+    }
+
+    .stars {
+      color: #ffd700;
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .modal-content {
+      background-color: #1e1e1e;
+      margin: 10% auto;
+      padding: 20px;
+      border: 2px solid rgba(128, 0, 128, 1);
+      border-radius: 12px;
+      width: 80%;
+      max-width: 400px;
+      box-shadow: 0 0 10px rgba(128, 0, 128, 1);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .modal-header h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .modal-header button {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.2rem;
+      cursor: pointer;
+    }
+
+    .modal-body {
+      margin-bottom: 20px;
+    }
+
+    .modal-body p {
+      font-size: 1rem;
+      color: #ddd;
+    }
+
+    .modal-body ul {
+      color: #ddd;
+      padding-left: 20px;
+      margin-top: 10px;
+    }
+
+    .modal-body ul li {
+      margin-bottom: 8px;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .quantity {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      width: 100%;
+    }
+
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .quantity-controls button {
+      background-color: #e108ff;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 4px;
+    }
+
+    .quantity-controls input {
+      width: 50px;
+      text-align: center;
+      margin: 0 10px;
+      padding: 5px;
+      border: none;
+      border-radius: 4px;
+      background-color: #333;
+      color: #fff;
+    }
+
+    .total-price {
+      font-size: 1.2rem;
+      color: #e108ff;
+      font-weight: 600;
+      width: 100%;
+      text-align: right;
+    }
+
+    .modal-footer button {
+      background-color: #e108ff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 6px;
+      width: 100%;
+      margin-top: 10px;
+    }
+
+    .modal-footer button:hover {
+      background-color: #b006cc;
+    }
+
+    /* Reviews section */
+    .reviews {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .review {
+      background-color: rgba(30, 30, 30, 0.8);
+      border: 2px solid rgba(128, 0, 128, 1);
+      border-radius: 12px;
+      padding: 15px;
+      width: calc(16.666% - 20px);
+      box-shadow: 0 0 10px rgba(128, 0, 128, 1);
+      box-sizing: border-box;
+    }
+
+    .review h3 {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+    }
+
+    .review p {
+      font-size: 0.9rem;
+      color: #ddd;
+    }
+
+    .stars {
+      color: #ffd700;
+      font-size: 1rem;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div id="vanta-bg"></div>
+
+  <header>
+    <img src="https://i.imgur.com/Egq0xbe.png" alt="Site Logo">
+    VanishBoosts
+  </header>
+
+  <div class="stats">
+    <div class="stat-box">
+      <img src="https://i.imgur.com/Hr8AhCC.png" alt="Feedback Rating">
+      <div>5</div>
+      <div>Feedback Rating</div>
+    </div>
+    <div class="stat-box">
+      <img src="https://i.imgur.com/NOknY8E.png" alt="Products Sold">
+      <div>7K+</div>
+      <div>Products Sold</div>
+    </div>
+    <div class="stat-box">
+      <img src="https://i.imgur.com/E7jcskj.png" alt="Total Clients">
+      <div>2K+</div>
+      <div>Total Clients</div>
+    </div>
+  </div>
+
+  <div class="button-container">
+    <button class="active" onclick="showProducts('products')">Products</button>
+    <button onclick="showProducts('reviews')">Reviews</button>
+    <button onclick="showProducts('faq')">FAQ</button>
+  </div>
+
+  <div class="product-container" id="products">
+    <section class="products">
+      <div class="card">
+        <h2>Nitro Basic</h2>
+        <div class="price">$0.99</div>
+        <div class="duration">1 MONTH</div>
+        <ul>
+          <li>Works for Everyone</li>
+          <li>30 Days Warranty</li>
+          <li>0 Server Boosts Included</li>
+          <li>100% Safe and Legal</li>
+        </ul>
+        <button onclick="openModal('Nitro Basic', '$0.99', '1 MONTH', ['Works for Everyone', '30 Days Warranty', '0 Server Boosts Included', '100% Safe and Legal'])">Purchase</button>
+      </div>
+
+      <div class="card">
+        <h2>Nitro Boost</h2>
+        <div class="price">$2.99</div>
+        <div class="duration">1 MONTH</div>
+        <ul>
+          <li>Works for Everyone</li>
+          <li>30 Days Warranty</li>
+          <li>2 Server Boosts Included</li>
+          <li>100% Safe and Legal</li>
+        </ul>
+        <button onclick="openModal('Nitro Boost', '$2.99', '1 MONTH', ['Works for Everyone', '30 Days Warranty', '2 Server Boosts Included', '100% Safe and Legal'])">Purchase</button>
+      </div>
+
+      <div class="card">
+        <h2>Nitro Basic</h2>
+        <div class="price">$7.99</div>
+        <div class="duration">1 YEAR</div>
+        <ul>
+          <li>Works for Everyone</li>
+          <li>30 Days Warranty</li>
+          <li>0 Server Boosts Included</li>
+          <li>100% Safe and Legal</li>
+        </ul>
+        <button onclick="openModal('Nitro Basic', '$7.99', '1 YEAR', ['Works for Everyone', '30 Days Warranty', '0 Server Boosts Included', '100% Safe and Legal'])">Purchase</button>
+      </div>
+
+      <div class="card">
+        <h2>Nitro Boost</h2>
+        <div class="price">$14.99</div>
+        <div class="duration">1 YEAR</div>
+        <ul>
+          <li>Works for Everyone</li>
+          <li>30 Days Warranty</li>
+          <li>2 Server Boosts Included</li>
+          <li>100% Safe and Legal</li>
+        </ul>
+        <button onclick="openModal('Nitro Boost', '$14.99', '1 YEAR', ['Works for Everyone', '30 Days Warranty', '2 Server Boosts Included', '100% Safe and Legal'])">Purchase</button>
+      </div>
+
+      <div class="card">
+        <h2>Server Boost 14x</h2>
+        <div class="price">$1.99</div>
+        <div class="duration">1 MONTH</div>
+        <ul>
+          <li>14x Server Boost</li>
+          <li>30 Days Warranty</li>
+          <li>Works for Everyone</li>
+          <li>100% Safe and Legal</li>
+        </ul>
+        <button onclick="openModal('Server Boost 14x', '$1.99', '1 MONTH', ['14x Server Boost', '30 Days Warranty', 'Works for Everyone', '100% Safe and Legal'])">Purchase</button>
+      </div>
+
+      <div class="card">
+        <h2>Server Boost 14x</h2>
+        <div class="price">$3.99</div>
+        <div class="duration">3 MONTHS</div>
+        <ul>
+          <li>14x Server Boost</li>
+          <li>30 Days Warranty</li>
+          <li>Works for Everyone</li>
+          <li>100% Safe and Legal</li>
+        </ul>
+        <button onclick="openModal('Server Boost 14x', '$3.99', '3 MONTHS', ['14x Server Boost', '30 Days Warranty', 'Works for Everyone', '100% Safe and Legal'])">Purchase</button>
+      </div>
+    </section>
+  </div>
+
+  <div class="product-container" id="reviews" style="display:none;">
+    <section class="reviews">
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"fast"</p>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"legit"</p>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"10/10"</p>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"thx"</p>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"legit"</p>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"cheap"</p>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"received insta"</p>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"good"</p>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"fast"</p>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"great"</p>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"top supplier"</p>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"100000/10"</p>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"LOVE YOU"</p>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"legit"</p>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"nitro boost"</p>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"legit"</p>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"legit"</p>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"legit"</p>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"nitro"</p>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"ty gng"</p>
+      </div>
+      <div class="review">
+        <div class="stars">★★★★★</div>
+        <h3>Anonymous</h3>
+        <p>"best"</p>
+      </div>
+    </section>
+  </div>
+
+  <div class="product-container" id="faq" style="display:none;">
+    <section class="faq-section">
+      <div class="faq-item">
+        <div class="faq-question">1. How do I get my product after paying?<span class="arrow">▶</span></div>
+        <div class="faq-answer">Once you've completed the payment, you'll get an email from us. Click <strong>View Order</strong> and you'll find your product there.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">2. How long does delivery take?<span class="arrow">▶</span></div>
+        <div class="faq-answer">Products are delivered instantly.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">3. Why are your prices so affordable?<span class="arrow">▶</span></div>
+        <div class="faq-answer">We use private, unique methods to obtain cheaper Discord nitro. All practices comply with the law, ensuring legality and transparency.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-question">4. Where can I reach you for assistance?<span class="arrow">▶</span></div>
+        <div class="faq-answer">You can reach us at <strong>discord.gg/vanishboosts</strong>. If the invite shows invalid, just wait a couple of hours—we disable invites during raids, fixes, or other issues.</div>
+      </div>
+    </section>
+  </div>
+
+  <div id="productModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle"></h2>
+        <button onclick="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p>Price: <span id="modalPrice"></span></p>
+        <p>Duration: <span id="modalDuration"></span></p>
+        <ul id="modalFeatures"></ul>
+      </div>
+      <div class="modal-footer">
+        <div class="quantity">
+          <div class="quantity-controls">
+            <button onclick="changeQuantity(-1)">-</button>
+            <input type="text" id="quantityInput" value="1" readonly>
+            <button onclick="changeQuantity(1)">+</button>
+          </div>
+          <div class="total-price">Total: $<span id="totalPrice">0.00</span></div>
+        </div>
+        <button onclick="proceedToPayment()">Proceed</button>
+      </div>
+    </div>
+  </div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.birds.min.js"></script>
+<script>
+  VANTA.BIRDS({
+    el: "#vanta-bg",
+    mouseControls: true,
+    touchControls: true,
+    gyroControls: false,
+    minHeight: 200.00,
+    minWidth: 200.00,
+    scale: 1.00,
+    scaleMobile: 1.00,
+    backgroundColor: 0x000000,
+    color1: 0x000000,
+    color2: 0xe108ff,
+    colorMode: "lerp",
+    birdSize: 0.50,
+    wingSpan: 40.00,
+    speedLimit: 3.00
+  });
+
+  document.querySelectorAll('.faq-question').forEach(question => {
+    question.addEventListener('click', () => {
+      const item = question.parentElement;
+      document.querySelectorAll('.faq-item').forEach(i => {
+        if (i !== item) i.classList.remove('active');
+      });
+      item.classList.toggle('active');
+    });
+  });
+
+  function showProducts(category) {
+    document.querySelectorAll('.product-container').forEach(container => {
+      container.style.display = 'none';
+    });
+    document.getElementById(category).style.display = 'flex';
+    document.querySelectorAll('.button-container button').forEach(button => {
+      button.classList.remove('active');
+    });
+    event.target.classList.add('active');
+  }
+
+  let currentProduct = { priceNum: 0 };
+
+  function openModal(title, price, duration, features) {
+    const priceNum = parseFloat(price.replace('$', ''));
+    currentProduct = { title, priceOriginal: price, priceNum, duration, features };
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalPrice').textContent = price;
+    document.getElementById('modalDuration').textContent = duration;
+    const featuresList = document.getElementById('modalFeatures');
+    featuresList.innerHTML = '';
+    features.forEach(feature => {
+      const li = document.createElement('li');
+      li.textContent = feature;
+      featuresList.appendChild(li);
+    });
+    document.getElementById('quantityInput').value = 1;
+    updateTotalPrice();
+    document.getElementById('productModal').style.display = 'block';
+  }
+
+  function updateTotalPrice() {
+    const quantity = parseInt(document.getElementById('quantityInput').value);
+    const totalPrice = currentProduct.priceNum * quantity;
+    document.getElementById('totalPrice').textContent = totalPrice.toFixed(2);
+  }
+
+  function changeQuantity(amount) {
+    const input = document.getElementById('quantityInput');
+    let current = parseInt(input.value);
+    current = Math.max(1, current + amount);
+    input.value = current;
+    updateTotalPrice();
+  }
+
+  function proceedToPayment() {
+    const quantity = parseInt(document.getElementById('quantityInput').value);
+    const totalPrice = currentProduct.priceNum * quantity;
+    const params = new URLSearchParams({
+      product: currentProduct.title,
+      price: currentProduct.priceOriginal,
+      duration: currentProduct.duration,
+      quantity: quantity,
+      total: totalPrice.toFixed(2)
+    });
+
+    window.location.href = 'payment_method.html?' + params.toString();
+  }
+
+  function closeModal() {
+    document.getElementById('productModal').style.display = 'none';
+  }
+
+  window.addEventListener('click', function(event) {
+    const modal = document.getElementById('productModal');
+    if (event.target === modal) {
+      closeModal();
+    }
+  });
+</script>
+</body>
+</html>
